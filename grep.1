@@ -9,17 +9,17 @@
 .		if \w'\(rq' .ds rq "\(rq
 .	\}
 .\}
-.ie t .ds Tx \s-1T\v'.4n'\h'-.1667'E\v'-.4n'\h'-.125'X\s0
-. el  .ds Tx TeX
-.de Id
-. ds Yr \\$4
-. substring Yr 0 3
-. ds Mn \\$4
-. substring Mn 5 6
-. ds Dy \\$4
-. substring Dy 8 9
-. \" ISO 8601 date, complete format, extended representation
-. ds Dt \\*(Yr-\\*(Mn-\\*(Dy
+.
+.ie \n[.g] .mso www.tmac
+.el \{\
+. de MTO
+\\$2 \(laemail: \\$1 \(ra\\$3
+..
+. de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.\}
+.
 ..
 .\"
 .\" About Japanese translation
@@ -32,14 +32,16 @@
 .\"     by Chonan Yoichi <cyoichi@maple.ocn.ne.jp>
 .\"   Updated and Modified (grep-2.20) Thu Feb 25 2017
 .\"     by Masakazu Takahashi <emasaka@gmail.com>
+.\"   Updated and Modified (grep-2.21) Thu Feb 25 2017
+.\"     by Masakazu Takahashi <emasaka@gmail.com>
 .\"
-.TH GREP 1 \*(Dt "GNU grep 2.20" "User Commands"
+.TH GREP 1 \*(Dt "GNU grep 2.21" "User Commands"
 .hy 0
 .
 .\"O .SH NAME
 .SH 名前
-.\"O grep, egrep, fgrep \- print lines matching a pattern
-grep, egrep, fgrep \- パターンにマッチする行を表示する
+.\"O grep, egrep, fgrep, rgrep \- print lines matching a pattern
+grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 .
 .\"O .SH SYNOPSIS
 .SH 書式
@@ -62,66 +64,59 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O .B grep
 .\"O searches the named input
 .\"O .IR FILE s
-.\"O (or standard input if no files are named,
-.\"O or if a single hyphen-minus
-.\"O .RB ( \- )
-.\"O is given as file name)
 .\"O for lines containing a match to the given
 .\"O .IR PATTERN .
+.\"O If no files are specified, or if the file
+.\"O .RB "\*(lq" \- "\*(rq"
+.\"O is given,
+.\"O .B grep
+.\"O searches standard input.
 .\"O By default,
 .\"O .B grep
 .\"O prints the matching lines.
 .B grep
 は
 .IR FILE
-で名前を指定されたファイル (ファイルが指定されていない場合や、
-ファイル名の代わりに 1 個のマイナス記号
-.RB ( \- )
-が指定されている場合は標準入力) を検索して、与えられた
+で名前を指定されたファイルを検索して、与えられた
 .IR PATTERN
 にマッチする部分を含む行を探します。
+ファイルが指定されていない場合や、
+ファイル名の代わりに 1 個のマイナス記号
+.RB "\*(lq" \- "\*(rq"
+が指定されている場合は、
+.B grep
+は標準入力から検索します。
 デフォルトでは、
 .B grep
 はマッチした行を表示します。
 .PP
 .\"O In addition, two variant programs
 .\"O .B egrep
+.\"O .B fgrep
 .\"O and
-.\"O .B fgrep
-.\"O are available.
-.\"O .B egrep
-.\"O is the same as
-.\"O .BR "grep\ \-E" .
-.\"O .B fgrep
-.\"O is the same as
-.\"O .BR "grep\ \-F" .
-さらに、2 つの兄弟プログラム
+.\"O .B rgrep
+.\"O are the same as
+.\"O .BR "grep\ \-E" ,
+.\"O .BR "grep\ \-F" ,
+.\"O and
+.\"O .BR "grep\ \-r" ,
+.\"O respectively.
+さらに、兄弟プログラム
 .B egrep
-と
+、
 .B fgrep
-が利用可能です。
-.B egrep
-は
+、
+.B rgrep
+は、それぞれ
 .BR "grep\ \-E"
-と同じです。
-.B fgrep
-は
+、
 .BR "grep\ \-F"
+、
+.BR "grep\ \-r" ,
 と同じです。
-.\"O Direct invocation as either
-.\"O .B egrep
-.\"O or
-.\"O .B fgrep
-.\"O is deprecated,
-.\"O but is provided to allow historical applications
-.\"O that rely on them to run unmodified.
-.B egrep
-や
-.B fgrep
-を直接その名前で呼び出すのは、お勧めできません。
-それが可能になっているのは、こうしたコマンドの存在を前提とする
-昔のアプリケーションが、プログラムを修正しないでも
-動くようにするためなのです。
+.\"O These variants are deprecated, but are provided for backward compatibility.
+.\"O .
+これらの兄弟プログラムは非推奨ですが、後方互換性のために用意されています。
 .
 .\"O .SH OPTIONS
 .SH オプション
@@ -129,20 +124,15 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .SS "プログラムについての一般情報"
 .TP
 .B \-\^\-help
-.\"O Print a usage message briefly summarizing these command-line options
-.\"O and the bug-reporting address, then exit.
-以下に述べるコマンドラインオプションについて簡潔にまとめた使用法と、
-バグレポートのためのアドレスを表示して、終了します。
+.\"O Output a usage message and exit.
+使用法を出力して終了します。
 .TP
 .BR \-V ", " \-\^\-version
-.\"O Print the version number of
+.\"O Output the version number of
 .\"O .B grep
-.\"O to the standard output stream.
-.\"O This version number should
-.\"O be included in all bug reports (see below).
+.\"O and exit.
 .B grep
-のバージョン番号を標準出力に表示します。バグレポート
-には、必ずこの番号を付記してください (下記参照)。
+のバージョン番号を出力して終了します。
 .\"O .SS "Matcher Selection"
 .SS "正規表現の選択"
 .TP
@@ -150,26 +140,17 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O Interpret
 .\"O .I PATTERN
 .\"O as an extended regular expression (ERE, see below).
-.\"O .RB ( \-E
-.\"O is specified by \s-1POSIX\s0.)
 .I PATTERN
 を拡張正規表現 (ERE) として扱います (下記参照)。
-.RB ( \-E
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BR \-F ", " \-\^\-fixed\-strings
 .\"O Interpret
 .\"O .I PATTERN
-.\"O as a list of fixed strings, separated by newlines,
-.\"O any of which is to be matched.
-.\"O .RB ( \-F
-.\"O is specified by \s-1POSIX\s0.)
+.\"O as a list of fixed strings (rather than regular expressions), separated by
+.\"O newlines, any of which is to be matched.
 .I PATTERN
-を改行で区切られた固定文字列 (訳注: すなわち、正規表現ではない
-ただの文字列) のリストとして扱い、
-その文字列のどれかとマッチするかを調べます。
-.RB ( \-F
-オプションは \s-1POSIX\s0 で規定されています)
+を改行で区切られた固定文字列 (正規表現のかわりに) のリストとして扱い、
+その文字列のいずれかとマッチするかどうかを調べます。
 .TP
 .BR \-G ", " \-\^\-basic\-regexp
 .\"O Interpret
@@ -187,7 +168,7 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O .B "grep \-P"
 .\"O may warn of unimplemented features.
 .I PATTERN
-を Perl の正規表現として扱います。
+を Perl の正規表現 (PCRE) として扱います (下記参照)。
 きわめて実験的なものなので、
 .B "grep \-P"
 を使うと、その機能は実装されていませんという
@@ -202,50 +183,34 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O This can be used to specify multiple search patterns,
 .\"O or to protect a pattern beginning with a hyphen
 .\"O .RB ( \- ).
-.\"O .RB ( \-e
-.\"O is specified by \s-1POSIX\s0.)
 .I PATTERN
 をパターンとして指定します。
 このオプションを使用すれば、多数の検索パターンを指定したり、
 ハイフン
 .RB ( \- )
 で始まるパターンを保護したりすることができます。
-.RB ( \-e
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BI \-f " FILE" "\fR,\fP \-\^\-file=" FILE
 .\"O Obtain patterns from
 .\"O .IR FILE ,
 .\"O one per line.
 .\"O The empty file contains zero patterns, and therefore matches nothing.
-.\"O .RB ( \-f
-.\"O is specified by \s-1POSIX\s0.)
 パターンを
 .IR FILE
 から 1 行 1 パターンとして読み込みます。
 空のファイルはパターンを含まないので、何にもマッチしません。
-.RB ( \-f
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BR \-i ", " \-\^\-ignore\-case
 .\"O Ignore case distinctions in both the
 .\"O .I PATTERN
 .\"O and the input files.
-.\"O .RB ( \-i
-.\"O is specified by \s-1POSIX\s0.)
 .I PATTERN
 と入力ファイルの双方で、アルファベットの大文字と小文字を
 区別しないようにします。
-.RB ( \-i
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BR \-v ", " \-\^\-invert\-match
 .\"O Invert the sense of matching, to select non-matching lines.
-.\"O .RB ( \-v
-.\"O is specified by \s-1POSIX\s0.)
 マッチの意味を逆にして、マッチしない行を抜き出して表示します。
-.RB ( \-v
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BR \-w ", " \-\^\-word\-regexp
 .\"O Select only those lines containing matches that form whole words.
@@ -269,11 +234,7 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .TP
 .BR \-x ", " \-\^\-line\-regexp
 .\"O Select only those matches that exactly match the whole line.
-.\"O .RB ( \-x
-.\"O is specified by \s-1POSIX\s0.)
 パターンが行全体とぴったりマッチしたときにのみ、その行を選択します。
-.RB ( \-x
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .B \-y
 .\"O Obsolete synonym for
@@ -289,14 +250,10 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O With the
 .\"O .BR \-v ", " \-\^\-invert\-match
 .\"O option (see below), count non-matching lines.
-.\"O .RB ( \-c
-.\"O is specified by \s-1POSIX\s0.)
 通常の出力はせず、各入力ファイルについてマッチした行数を表示します。
 .BR \-v ", " \-\^\-invert-match
 オプション (上記参照) と共に指定した場合は、
 マッチしなかった行数を表示します。
-.RB ( \-c
-オプションは \s-1POSIX\s0 で指定されています)
 .TP
 .BR \-\^\-color [ =\fIWHEN\fP "], " \-\^\-colour [ =\fIWHEN\fP ]
 .\"O Surround the matched (non-empty) strings, matching lines, context lines,
@@ -343,8 +300,6 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O the name of each input file from which output
 .\"O would normally have been printed.
 .\"O The scanning will stop on the first match.
-.\"O .RB ( \-l
-.\"O is specified by \s-1POSIX\s0.)
 通常の出力はしません。その代わりに、
 .BR grep
 を普通に実行した際に、何らかの検索結果を表示するような入力ファイルの名前を
@@ -352,8 +307,6 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 \fB\-v\fR オプションを同時に指定しない場合は、パターンにマッチする
 文字列を含む行が存在するファイルの名前を列挙するということです)。
 個々のファイルに対する走査は、最初のマッチで終了します。
-.RB ( \-l
-オプションは \s-1POSIX\s0 で規定されています)
 .TP
 .BI \-m " NUM" "\fR,\fP \-\^\-max\-count=" NUM
 .\"O Stop reading a file after
@@ -439,8 +392,6 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O or
 .\"O .B \-\^\-no\-messages
 .\"O option.
-.\"O .RB ( \-q
-.\"O is specified by \s-1POSIX\s0.)
 沈黙モードです。標準出力に何も書き出しません。
 マッチするものが 1 つでも見つかると、エラーを検出していた場合でも、
 終了ステータス 0 で即座に終了します。
@@ -448,76 +399,11 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 や
 .B \-\^\-no\-messages
 オプションも参照してください。
-.RB ( \-q
-オプションは \s-1POSIX\s0. で規定されています)
 .TP
 .BR \-s ", " \-\^\-no\-messages
 .\"O Suppress error messages about nonexistent or unreadable files.
-.\"O Portability note: unlike \s-1GNU\s0
-.\"O .BR grep ,
-.\"O 7th Edition Unix
-.\"O .B grep
-.\"O did not conform to \s-1POSIX\s0, because it lacked
-.\"O .B \-q
-.\"O and its
-.\"O .B \-s
-.\"O option behaved like \s-1GNU\s0
-.\"O .BR grep 's
-.\"O .B \-q
-.\"O option.
-.\"O \s-1USG\s0-style
-.\"O .B grep
-.\"O also lacked
-.\"O .B \-q
-.\"O but its
-.\"O .B \-s
-.\"O option behaved like \s-1GNU\s0
-.\"O .BR grep .
-.\"O Portable shell scripts
-.\"O should avoid both
-.\"O .B \-q
-.\"O and
-.\"O .B \-s
-.\"O and should redirect standard and error output to
-.\"O .B /dev/null
-.\"O instead.
-.\"O .RB ( \-s
-.\"O is specified by \s-1POSIX\s0.)
 ファイルが存在しないことや読み込みめないことを示す
 エラーメッセージを抑止します。
-移植に関する注意: \s-1GNU\s0
-.BR grep
-とは異なり、
-Unix 第 7 版の
-.B grep
-は \s-1POSIX\s0 の規格に沿っていませんでした。なぜなら、それには
-.B \-q
-オプションがなく、
-.B \-s
-オプションも \s-1GNU\s0
-.BR grep
-の
-.B \-q
-オプションのように動作したからです。
-\s-1USG\s0 系の
-.B grep
-にも
-.B \-q
-オプションがありませんでしたが、
-.B \-s
-オプションの方は \s-1GNU\s0 の
-.BR grep
-と同じように動作しました
-(訳注: USG は Unix  Support  Group の略。USG Unix と言うと、
-Unix 第 7 版以後の AT&T 系の商用 Unix を指します)。
-移植性を考慮したシェルスクリプトでは、
-.B \-q
-と
-.B \-s
-のどちらも使用することは避けて、標準出力や標準エラーを /dev/null に
-リダイレクトするべきです。
-.RB ( \-s
-オプションは \s-1POSIX\s0 で規定されています)
 .\"O .SS "Output Line Prefix Control"
 .SS "出力する行の前に付ける情報の制御"
 .TP
@@ -573,11 +459,7 @@ Unix 第 7 版以後の AT&T 系の商用 Unix を指します)。
 .BR \-n ", " \-\^\-line\-number
 .\"O Prefix each line of output with the 1-based line number
 .\"O within its input file.
-.\"O .RB ( \-n
-.\"O is specified by \s-1POSIX\s0.)
 各出力行の前に、その入力ファイル内での 1 から始まる行番号を表示します。
-.RB ( \-n
-オプションは \s-1POSIX\s0. で規定されています)
 .TP
 .BR \-T ", " \-\^\-initial\-tab
 .\"O Make sure that the first character of actual line content lies on a
@@ -1060,7 +942,7 @@ CR 文字を取り除きます。
 .PP
 .\"O .B grep
 .\"O understands three different versions of regular expression syntax:
-.\"O \*(lqbasic,\*(rq \*(lqextended\*(rq and \*(lqperl.\*(rq In
+.\"O \*(lqbasic\*(rq (BRE), \*(lqextended\*(rq (ERE) and \*(lqperl\*(rq (PCRE). In
 .\"O .RB "\s-1GNU\s0\ " grep ,
 .\"O there is no difference in available functionality between basic and
 .\"O extended syntaxes.
@@ -1068,20 +950,20 @@ CR 文字を取り除きます。
 .\"O The following description applies to extended regular expressions;
 .\"O differences for basic regular expressions are summarized afterwards.
 .\"O Perl regular expressions give additional functionality, and are
-.\"O documented in pcresyntax(3) and pcrepattern(3), but may not be
-.\"O available on every system.
+.\"O documented in pcresyntax(3) and pcrepattern(3), but only work if pcre
+.\"O is available in the system.
 .\"O .PP
 .B grep
-は、「基本」正規表現、「拡張」正規表現、「Perl の」正規表現という
-3 種類の正規表現文法を扱うことができます。
+は、「基本」正規表現 (BRE)、「拡張」正規表現 (ERE)、「Perl の」正規表現
+(PCRE) という 3 種類の正規表現文法を扱うことができます。
 .RB "\s-1GNU\s0\ " grep
 では、「基本」と「拡張」の文法の間で、利用できる機能に違いはありません。
 他の実装では、基本正規表現は拡張正規表現ほど強力ではないものです。
 ここでは、拡張正規表現について説明し、
 基本正規表現との相違については、後で簡単にまとめることにします。
-なお、Perl の正規表現は機能がさらに増加しており、
+なお、Perl の正規表現にはより多くの機能があり、
 pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
-どのシステムでも利用できるとはかぎりません。
+pcre が用意されているシステムでしか利用できません。
 .PP
 .\"O The fundamental building blocks are the regular expressions
 .\"O that match a single character.
@@ -1454,73 +1336,6 @@ C ロケールや \s-1ASCII\s0 文字集合のエンコーディングの場合�
 .BR \e( ,
 .BR \e)
 を代わりに使用してください。
-.PP
-.\"O Traditional
-.\"O .B egrep
-.\"O did not support the
-.\"O .B {
-.\"O meta-character, and some
-.\"O .B egrep
-.\"O implementations support
-.\"O .B \e{
-.\"O instead, so portable scripts should avoid
-.\"O .B {
-.\"O in
-.\"O .B "grep\ \-E"
-.\"O patterns and should use
-.\"O .B [{]
-.\"O to match a literal
-.\"O .BR { .
-.\"O .PP
-元々の
-.B egrep
-は、
-.B {
-をメタ文字としてサポートしていませんでしたし、
-.B {
-の代わりに
-.B \e{
-をメタ文字としてサポートする
-.B egrep
-の実装も存在します。
-ですから、移植を考慮したスクリプトでは、
-.B "grep\ \-E"
-のパターンで
-.B {
-を使用することは避けるべきです。
-.BR {
-という記号そのものにマッチさせたいときは
-.B [{]
-を使うとよいでしょう。
-.PP
-.\"O \s-1GNU\s0
-.\"O .B "grep\ \-E"
-.\"O attempts to support traditional usage by assuming that
-.\"O .B {
-.\"O is not special if it would be the start of an invalid interval
-.\"O specification.
-.\"O For example, the command
-.\"O .B "grep\ \-E\ '{1'"
-.\"O searches for the two-character string
-.\"O .B {1
-.\"O instead of reporting a syntax error in the regular expression.
-.\"O \s-1POSIX\s0 allows this behavior as an extension, but portable scripts
-.\"O should avoid it.
-.\"O .
-\s-1GNU\s0
-の
-.B "grep\ \-E"
-は、
-.B {
-が繰り返し回数指定の始まりとして意味をなさない場合、
-それを特殊文字ではないと見なし、従来の用法のサポートを試みます。
-たとえば、コマンド
-.B "grep\ \-E\ '{1'"
-は、正規表現に文法エラーがあると報告するかわりに、2 文字からなる文字列
-.B {1
-を検索するのです。
-この動作は、\s-1POSIX\s0 によって拡張として認められていますが、
-移植を考慮したスクリプトでは使用しない方がよいでしょう。
 .
 .\"O .SH "ENVIRONMENT VARIABLES"
 .SH "環境変数"
@@ -1581,37 +1396,23 @@ C ロケールや \s-1ASCII\s0 文字集合のエンコーディングの場合�
 .B GREP_OPTIONS
 .\"O This variable specifies default options
 .\"O to be placed in front of any explicit options.
-.\"O For example, if
-.\"O .B GREP_OPTIONS
-.\"O is
-.\"O .BR "'\-\^\-binary-files=without-match \-\^\-directories=skip'" ,
-.\"O .B grep
-.\"O behaves as if the two options
-.\"O .B \-\^\-binary\-files=without-match
+.\"O As this causes problems when writing portable scripts,
+.\"O this feature will be removed in a future release of
+.\"O .BR grep ,
 .\"O and
-.\"O .B \-\^\-directories=skip
-.\"O had been specified before any explicit options.
-.\"O Option specifications are separated by whitespace.
-.\"O A backslash escapes the next character,
-.\"O so it can be used to specify an option containing whitespace or a backslash.
-この変数ではデフォルトのオプションを指定しますが、そうしたオプションは
-コマンドラインで明示的に指定するオプションの前に置かれることになります。
-たとえば、
-.B GREP_OPTIONS
-が
-.BR "'\-\^\-binary-files=without-match \-\^\-directories=skip'"
-ならば、
+.\"O .B grep
+.\"O warns if it is used.
+.\"O Please use an alias or script instead.
+この変数ではデフォルトのオプションを指定します。そうしたオプションは
+コマンドラインで明示的に指定するオプションの前に置かれます。
+これが移植性の高いスクリプトを書くときに問題となるため、
+この機能は
+.BR grep
+の将来のリリースで削除されることになっており、
+使われると
 .B grep
-は、
-コマンドラインで明示的に指定するオプションの前に
-.B \-\^\-binary\-files=without-match
-と
-.B \-\^\-directories=skip
-の 2 つのオプションがすでに指定されているかのように振舞うわけです。
-オプションを複数指定するときは、空白 (whitespace) で区切ります。
-バックスラッシュは次に来る文字をエスケープするので、
-空白 (whitespace) やバックスラッシュを含むオプションを指定するのに
-使うことができます。
+が警告を表示します。
+かわりにエイリアスやスクリプトを使ってください。
 .TP
 .B GREP_COLOR
 .\"O This variable specifies the color used to highlight matched (non-empty) text.
@@ -2152,41 +1953,24 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .
 .\"O .SH "EXIT STATUS"
 .SH "返り値"
-.\"O Normally, the exit status is 0 if selected lines are found and 1 otherwise.
-.\"O But the exit status is 2 if an error occurred, unless the
+.\"O Normally the exit status is 0 if a line is selected, 1 if no lines
+.\"O were selected, and 2 if an error occurred.  However, if the
 .\"O .B \-q
 .\"O or
 .\"O .B \-\^\-quiet
 .\"O or
 .\"O .B \-\^\-silent
-.\"O option is used and a selected line is found.
-.\"O Note, however, that \s-1POSIX\s0 only mandates, for programs such as
-.\"O .BR grep ,
-.\"O .BR cmp ,
-.\"O and
-.\"O .BR diff ,
-.\"O that the exit status in case of error be greater than 1;
-.\"O it is therefore advisable, for the sake of portability,
-.\"O to use logic that tests for this general condition
-.\"O instead of strict equality with\ 2.
+.\"O is used and a line is selected, the exit status is 0 even if an error
+.\"O occurred.
 .\"O .
-通常では、選択する行が見つかったときの終了ステータスは 0 であり、
-見つからなかったときは 1 です。エラーが起きた場合は、
+通常では、指定した行が見つかったときの終了ステータスは 0 であり、
+見つからなかったときは 1 であり、エラーが起きた場合は 2 です。
+ただし、
 .B \-q ,
 .B \-\^\-quiet ,
 .B \-\^\-silent
-といったオプションが使われていて、しかも、選択する行が見つかったときを
-除いて、終了ステータスは 2 です。
-しかしながら、\s-1POSIX\s0 は
-.BR grep ,
-.BR cmp ,
-.BR diff
-のようなプログラムに対して、
-エラーが起きた場合の終了ステータスは 2 以上でなければならない、
-としか要求していないことに注意してください。
-ですから、移植性のためには、終了ステータスが 2 と厳密に一致することを
-調べるよりも、この一般的な条件をテストするロジックを使用した方が
-よいでしょう。
+といったオプションが使われていて、指定した行が見つかったときは、
+エラーが起きたときでも終了ステータスは 0 です。
 .
 .\"O .SH COPYRIGHT
 .SH "著作権"
@@ -2202,23 +1986,19 @@ not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .\"O .SS "Reporting Bugs"
 .SS "バグの報告"
 .\"O Email bug reports to
-.\"O .RB < bug\-grep@gnu.org >,
-.\"O a mailing list whose web page is
-.\"O .RB < http://lists.gnu.org/mailman/listinfo/bug\-grep >.
-.\"O .BR grep 's
-.\"O Savannah bug tracker is located at
-.\"O .RB < http://savannah.gnu.org/bugs/?group=grep >.
+.\"O .MTO bug-grep@gnu.org "the bug-reporting address" .
+.\"O An
+.\"O .URL http://lists.gnu.org/mailman/listinfo/bug-grep "email archive"
+.\"O and a
+.\"O .URL http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep "bug tracker"
+.\"O are available.
 バグ報告は
-.RB < bug\-grep@gnu.org >
-宛に E メールで送ってください。これはメーリングリストで、
-下記がその Web ページです。
-.br
-.RB < http://lists.gnu.org/mailman/listinfo/bug\-grep >
-.br
-.BR grep
-の Savannah バグ・トラッカーは下記にあります。
-.br
-.RB < http://savannah.gnu.org/bugs/?group=grep >
+.MTO bug-grep@gnu.org "バグ報告アドレス"
+宛に E メールで送ってください。
+.URL http://lists.gnu.org/mailman/listinfo/bug-grep "メールアーカイブ"
+と
+.URL http://debbugs.gnu.org/cgi/pkgreport.cgi?package=grep "バグトラッカー"
+も用意されています。
 .\"O .SS "Known Bugs"
 .SS "既知のバク"
 .\"O Large repetition counts in the
@@ -2258,12 +2038,11 @@ glob(7), regex(7).
 .\"O .SS "\s-1POSIX\s0 Programmer's Manual Page"
 .SS "\s-1POSIX\s0 プログラマーズ・マニュアルページ"
 grep(1p).
-.\"O .SS "\*(Txinfo Documentation"
-.SS "\*(Txinfo 文書"
-.\"O The full documentation for
-.\"O .B grep
-.\"O is maintained as a \*(Txinfo manual,
-.\"O which you can read at http://www.gnu.org/software/grep/manual/.
+.\"O .SS "Full Documentation"
+.SS "完全版の文書"
+.\"O A
+.\"O .URL http://www.gnu.org/software/grep/manual/ "complete manual"
+.\"O is available.
 .\"O If the
 .\"O .B info
 .\"O and
@@ -2274,9 +2053,8 @@ grep(1p).
 .\"O .PP
 .\"O should give you access to the complete manual.
 .\"O .
-.B grep
-のための完全版の文書が、\*(Txinfo マニュアルの形で保守され、
-http://www.gnu.org/software/grep/manual/ で読めます。
+.URL http://www.gnu.org/software/grep/manual/ "完全版のマニュアル"
+が用意されています。
 .B info
 と
 .B grep
@@ -2292,9 +2070,6 @@ http://www.gnu.org/software/grep/manual/ で読めます。
 .\"O .PP
 このマニュアルは断続的にメンテナンスされるため、
 完全版の文書のほうが最新であることがよくあります。
-.PP
-\s-1GNU\s0's not Unix, but Unix is a beast;
-its plural form is Unixen.
 .SH "訳者謝辞"
 この翻訳は、FreeBSD jpman Project <http://www.jp.freebsd.org/man-jp/>
 から Linux JM project に寄贈していただいたマニュアルを元にし、

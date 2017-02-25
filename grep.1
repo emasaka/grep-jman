@@ -34,14 +34,16 @@
 .\"     by Masakazu Takahashi <emasaka@gmail.com>
 .\"   Updated and Modified (grep-2.21) Thu Feb 25 2017
 .\"     by Masakazu Takahashi <emasaka@gmail.com>
+.\"   Updated and Modified (grep-2.25) Thu Feb 25 2017
+.\"     by Masakazu Takahashi <emasaka@gmail.com>
 .\"
-.TH GREP 1 \*(Dt "GNU grep 2.21" "User Commands"
+.TH GREP 1 \*(Dt "GNU grep 2.25" "User Commands"
 .hy 0
 .
 .\"O .SH NAME
 .SH 名前
-.\"O grep, egrep, fgrep, rgrep \- print lines matching a pattern
-grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
+.\"O grep, egrep, fgrep \- print lines matching a pattern
+grep, egrep, fgrep \- パターンにマッチする行を表示する
 .
 .\"O .SH SYNOPSIS
 .SH 書式
@@ -92,27 +94,21 @@ grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 .PP
 .\"O In addition, two variant programs
 .\"O .B egrep
-.\"O .B fgrep
 .\"O and
-.\"O .B rgrep
+.\"O .B fgrep
 .\"O are the same as
 .\"O .BR "grep\ \-E" ,
-.\"O .BR "grep\ \-F" ,
 .\"O and
-.\"O .BR "grep\ \-r" ,
+.\"O .BR "grep\ \-F" ,
 .\"O respectively.
 さらに、兄弟プログラム
 .B egrep
-、
+と
 .B fgrep
-、
-.B rgrep
 は、それぞれ
 .BR "grep\ \-E"
-、
+と
 .BR "grep\ \-F"
-、
-.BR "grep\ \-r" ,
 と同じです。
 .\"O These variants are deprecated, but are provided for backward compatibility.
 .\"O .
@@ -146,8 +142,9 @@ grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 .BR \-F ", " \-\^\-fixed\-strings
 .\"O Interpret
 .\"O .I PATTERN
-.\"O as a list of fixed strings (rather than regular expressions), separated by
-.\"O newlines, any of which is to be matched.
+.\"O as a list of fixed strings (instead of regular expressions),
+.\"O separated by newlines,
+.\"O any of which is to be matched.
 .I PATTERN
 を改行で区切られた固定文字列 (正規表現のかわりに) のリストとして扱い、
 その文字列のいずれかとマッチするかどうかを調べます。
@@ -161,14 +158,11 @@ grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 を基本正規表現 (BRE) として扱います (下記参照)。これがデフォルトです。
 .TP
 .BR \-P ", " \-\^\-perl\-regexp
-.\"O Interpret
-.\"O .I PATTERN
-.\"O as a Perl regular expression.
+.\"O Interpret the pattern as a Perl-compatible regular expression (PCRE).
 .\"O This is highly experimental and
 .\"O .B "grep \-P"
 .\"O may warn of unimplemented features.
-.I PATTERN
-を Perl の正規表現 (PCRE) として扱います (下記参照)。
+パターンを Perl 互換の正規表現 (PCRE) として扱います。
 きわめて実験的なものなので、
 .B "grep \-P"
 を使うと、その機能は実装されていませんという
@@ -180,24 +174,36 @@ grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 .\"O Use
 .\"O .I PATTERN
 .\"O as the pattern.
-.\"O This can be used to specify multiple search patterns,
-.\"O or to protect a pattern beginning with a hyphen
-.\"O .RB ( \- ).
 .I PATTERN
 をパターンとして指定します。
-このオプションを使用すれば、多数の検索パターンを指定したり、
-ハイフン
-.RB ( \- )
-で始まるパターンを保護したりすることができます。
+.\"O If this option is used multiple times or is combined with the
+.\"O .B \-f
+.\"O .RB ( \-\-file )
+.\"O option, search for all patterns given.
+このオプションを複数回使ったときや、
+.B \-f
+.RB ( \-\-file )
+オプションと組み合わせたときは、与えられたすべてのパターンを検索します。
+.\"O This option can be used to protect a pattern beginning with \*(lq\-\*(rq.
+このオプションは、ハイフン  \*(lq\-\*(rq
+で始まるパターンを保護するのにも使えます。
 .TP
 .BI \-f " FILE" "\fR,\fP \-\^\-file=" FILE
 .\"O Obtain patterns from
 .\"O .IR FILE ,
 .\"O one per line.
-.\"O The empty file contains zero patterns, and therefore matches nothing.
 パターンを
 .IR FILE
 から 1 行 1 パターンとして読み込みます。
+.\"O If this option is used multiple times or is combined with the
+.\"O .B \-e
+.\"O .RB ( \-\-regexp )
+.\"O option, search for all patterns given.
+このオプションを複数回使ったときや、
+.\"O .B \-e
+.\"O .RB ( \-\-regexp )
+オプションと組み合わせたときは、与えられたすべてのパターンを検索します。
+.\"O The empty file contains zero patterns, and therefore matches nothing.
 空のファイルはパターンを含まないので、何にもマッチしません。
 .TP
 .BR \-i ", " \-\^\-ignore\-case
@@ -235,6 +241,16 @@ grep, egrep, fgrep, rgrep \- パターンにマッチする行を表示する
 .BR \-x ", " \-\^\-line\-regexp
 .\"O Select only those matches that exactly match the whole line.
 パターンが行全体とぴったりマッチしたときにのみ、その行を選択します。
+.\"O For a regular expression pattern, this is like parenthesizing the
+.\"O pattern and then surrounding it with
+.\"O .B ^
+.\"O and
+.\"O .BR $ .
+正規表現でいうと、これはパターンを括弧で囲み、前後に
+.B ^
+と
+.BR $
+を付けるようなものです。
 .TP
 .B \-y
 .\"O Obsolete synonym for
@@ -654,11 +670,6 @@ Unix 形式のバイトオフセットを報告します。
 .\"O processes a binary file as if it were text; this is equivalent to the
 .\"O .B \-a
 .\"O option.
-.\"O .I Warning:
-.\"O .B "grep \-\^\-binary\-files=text"
-.\"O might output binary garbage,
-.\"O which can have nasty side effects if the output is a terminal and if the
-.\"O terminal driver interprets some of it as commands.
 ファイルの最初の数バイトが、
 ファイルの内容がバイナリデータであることを示す場合、
 ファイルのタイプを
@@ -690,6 +701,23 @@ Unix 形式のバイトオフセットを報告します。
 これは
 .B \-a
 オプションと等価です。
+.\"O When processing binary data,
+.\"O .B grep
+.\"O may treat non-text bytes as line terminators; for example, the pattern
+.\"O .RB ' . '\&
+.\"O (period) might not match a null byte, as the null byte might be
+.\"O treated as a line terminator.
+.B grep
+がバイナリデータを処理するときは、
+テキストでない文字を行の区切りとして扱います。
+たとえば、.RB ' . '\&
+(ピリオド) というパターンは NULL 文字にはマッチしません。
+これは、NULL 文字が行の区切りとして扱われるためです。
+.\"O .I Warning:
+.\"O .B "grep \-\^\-binary\-files=text"
+.\"O might output binary garbage,
+.\"O which can have nasty side effects if the output is a terminal and if the
+.\"O terminal driver interprets some of it as commands.
 .I 警告:
 .B "grep \-\^\-binary-files=text"
 はバイナリのゴミを出力するかもしれません。
@@ -841,11 +869,14 @@ grep
 .BR \-r ", " \-\^\-recursive
 .\"O Read all files under each directory, recursively,
 .\"O following symbolic links only if they are on the command line.
+各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
+ただし、シンボリックリンクはコマンドラインで指定されたときにのみたどります。
+.\"O Note that if no file operand is given, grep searches the working directory.
+対象ファイルが与えられなかった場合には
+grep は現在のディレクトリを探すことに注意してください
 .\"O This is equivalent to the
 .\"O .B "\-d recurse"
 .\"O option.
-各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
-ただし、シンボリックリンクはコマンドラインで指定されたときにのみたどります。
 これは
 .B "\-d recurse"
 オプションと等価です。
@@ -942,16 +973,17 @@ CR 文字を取り除きます。
 .PP
 .\"O .B grep
 .\"O understands three different versions of regular expression syntax:
-.\"O \*(lqbasic\*(rq (BRE), \*(lqextended\*(rq (ERE) and \*(lqperl\*(rq (PCRE). In
+.\"O \*(lqbasic\*(rq (BRE), \*(lqextended\*(rq (ERE) and \*(lqperl\*(rq (PCRE).
+.\"O In
 .\"O .RB "\s-1GNU\s0\ " grep ,
 .\"O there is no difference in available functionality between basic and
 .\"O extended syntaxes.
 .\"O In other implementations, basic regular expressions are less powerful.
 .\"O The following description applies to extended regular expressions;
 .\"O differences for basic regular expressions are summarized afterwards.
-.\"O Perl regular expressions give additional functionality, and are
-.\"O documented in pcresyntax(3) and pcrepattern(3), but only work if pcre
-.\"O is available in the system.
+.\"O Perl-compatible regular expressions give additional functionality, and are
+.\"O documented in pcresyntax(3) and pcrepattern(3), but only work if
+.\"O PCRE is available in the system.
 .\"O .PP
 .B grep
 は、「基本」正規表現 (BRE)、「拡張」正規表現 (ERE)、「Perl の」正規表現
@@ -961,9 +993,9 @@ CR 文字を取り除きます。
 他の実装では、基本正規表現は拡張正規表現ほど強力ではないものです。
 ここでは、拡張正規表現について説明し、
 基本正規表現との相違については、後で簡単にまとめることにします。
-なお、Perl の正規表現にはより多くの機能があり、
+なお、Perl 互換の正規表現にはより多くの機能があり、
 pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
-pcre が用意されているシステムでしか利用できません。
+PCRE が用意されているシステムでしか利用できません。
 .PP
 .\"O The fundamental building blocks are the regular expressions
 .\"O that match a single character.
@@ -1974,7 +2006,7 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .
 .\"O .SH COPYRIGHT
 .SH "著作権"
-Copyright 1998-2000, 2002, 2005-2014 Free Software Foundation, Inc.
+Copyright 1998-2000, 2002, 2005-2016 Free Software Foundation, Inc.
 .PP
 This is free software;
 see the source for copying conditions.

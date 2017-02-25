@@ -30,8 +30,10 @@
 .\"       .Id %Id: grep.1,v 1.3 2000/06/09 21:58:50 horikawa Exp %
 .\"   Updated and Modified (grep-2.6.3) Thu Nov 11 11:44:47 JST 2010
 .\"     by Chonan Yoichi <cyoichi@maple.ocn.ne.jp>
+.\"   Updated and Modified (grep-2.20) Thu Feb 25 2017
+.\"     by Masakazu Takahashi <emasaka@gmail.com>
 .\"
-.TH GREP 1 \*(Dt "GNU grep 2.6.3" "User Commands"
+.TH GREP 1 \*(Dt "GNU grep 2.20" "User Commands"
 .hy 0
 .
 .\"O .SH NAME
@@ -849,19 +851,19 @@ Unix 形式のバイトオフセットを報告します。
 .\"O .I ACTION
 .\"O is
 .\"O .BR read ,
-.\"O which means that directories are read just as if they were ordinary files.
+.\"O i.e., read directories just as if they were ordinary files.
 .\"O If
 .\"O .I ACTION
 .\"O is
 .\"O .BR skip ,
-.\"O directories are silently skipped.
+.\"O silently skip directories.
 .\"O If
 .\"O .I ACTION
 .\"O is
 .\"O .BR recurse ,
-.\"O .B grep
-.\"O reads all files under each directory, recursively;
-.\"O this is equivalent to the
+.\"O read all files under each directory, recursively,
+.\"O following symbolic links only if they are on the command line.
+.\"O This is equivalent to the
 .\"O .B \-r
 .\"O option.
 入力ファイルがディレクトリの場合に、
@@ -883,6 +885,7 @@ Unix 形式のバイトオフセットを報告します。
 .B
 grep
 は各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
+コマンドラインの場合はシンボリックリンクを追跡します。
 これは
 .B \-r
 オプションと等価です。
@@ -953,15 +956,24 @@ grep
 .RB ( \-\^\-exclude
 の項で説明したワイルドカードのマッチングを使用します)。
 .TP
-.BR \-R ", " \-r ", " \-\^\-recursive
-.\"O Read all files under each directory, recursively;
-.\"O this is equivalent to the
+.BR \-r ", " \-\^\-recursive
+.\"O Read all files under each directory, recursively,
+.\"O following symbolic links only if they are on the command line.
+.\"O This is equivalent to the
 .\"O .B "\-d recurse"
 .\"O option.
 各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
+コマンドラインの場合はシンボリックリンクを追跡します。
 これは
 .B "\-d recurse"
 オプションと等価です。
+.BR \-R ", " \-\^\-dereference\-recursive
+.\"O Read all files under each directory, recursively.
+.\"O Follow all symbolic links, unlike
+.\"O .BR \-r .
+各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
+.BR \-r
+と異なり、すべてのシンボリックリンクを追跡します。
 .\"O .SS "Other Options"
 .SS "その他のオプション"
 .TP
@@ -970,37 +982,6 @@ grep
 .\"O This can cause a performance penalty.
 行ごとに出力を行います。
 実行速度が落ちるかもしれません。
-.TP
-.B \-\^\-mmap
-.\"O If possible, use the
-.\"O .BR mmap (2)
-.\"O system call to read input, instead of
-.\"O the default
-.\"O .BR read (2)
-.\"O system call.
-.\"O In some situations,
-.\"O .B \-\^\-mmap
-.\"O yields better performance.
-.\"O However,
-.\"O .B \-\^\-mmap
-.\"O can cause undefined behavior (including core dumps)
-.\"O if an input file shrinks while
-.\"O .B grep
-.\"O is operating, or if an I/O error occurs.
-可能ならば、デフォルトの
-.BR read (2)
-システムコールの代わりに
-.BR mmap (2)
-システムコールを使って入力を読み込みます。
-場合によっては
-.B \-\^\-mmap
-を指定すると、性能が上がることがあります。
-しかし、
-.B grep
-の動作中に入力ファイルがほかのプロセスによって切り詰められたり、
-I/O エラーが生じたりすると、
-.B \-\^\-mmap
-は (コアダンプを含む) 未定義の動作を引き起こす可能性があります。
 .TP
 .BR \-U ", " \-\^\-binary
 .\"O Treat the file(s) as binary.
@@ -1218,11 +1199,10 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 .\"O .BR [:xdigit:].
 .\"O For example,
 .\"O .B [[:alnum:]]
-.\"O means
-.\"O .BR [0\-9A\-Za\-z] ,
-.\"O except the latter form depends upon the C locale and the
-.\"O \s-1ASCII\s0 character encoding, whereas the former is independent
-.\"O of locale and character set.
+.\"O means the character class of numbers and
+.\"O letters in the current locale. In the C locale and \s-1ASCII\s0
+.\"O character set encoding, this is the same as
+.\"O .BR [0\-9A\-Za\-z] .
 .\"O (Note that the brackets in these class names are part of the symbolic
 .\"O names, and must be included in addition to the brackets delimiting
 .\"O the bracket expression.)
@@ -1253,10 +1233,11 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 たとえば、
 .B [[:alnum:]]
 は
-.BR [0-9A-Za-z]
-と同じです。ただし、後者が C ロケールや
-\s-1ASCII\s0 文字コードに依存しているのに対して、
-前者はロケールや文字集合に依存しません。
+現在のロケールの文字クラスで数字とアルファベットを意味します。
+C ロケールや \s-1ASCII\s0 文字集合のエンコーディングの場合、
+これは
+.BR [0\-9A\-Za\-z]
+と同じです。
 (こうしたクラス名に使用されている角括弧は、シンボル名の一部なので、
 角括弧式の前後に付く角括弧とは別に指定する必要があることに
 注意してください。)
@@ -1305,11 +1286,11 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 .\"O The symbol
 .\"O .B \ew
 .\"O is a synonym for
-.\"O .B [[:alnum:]]
+.\"O .B [_[:alnum:]]
 .\"O and
 .\"O .B \eW
 .\"O is a synonym for
-.\"O .BR [^[:alnum:]] .
+.\"O .BR [^_[:alnum:]] .
 シンボル
 .B \e<
 とシンボル
@@ -1326,12 +1307,12 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 シンボル
 .B \ew
 は
-.B [[:alnum:]]
+.B [_[:alnum:]]
 と同じ意味で、
 シンボル
 .B \eW
 は
-.BR [^[:alnum:]]
+.BR [^_[:alnum:]] .
 と同じ意味です。
 .\"O .SS Repetition
 .SS "繰り返し"
@@ -1374,6 +1355,8 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 直前の項目が
 .I m
 回以下マッチするということ。
+.\"O This is a \s-1GNU\s0 extension.
+これは \s-1GNU\s0 拡張です。
 .TP
 .BI { n , m }
 .\"O The preceding item is matched at least
@@ -1520,7 +1503,7 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 .\"O searches for the two-character string
 .\"O .B {1
 .\"O instead of reporting a syntax error in the regular expression.
-.\"O \s-1POSIX.2\s0 allows this behavior as an extension, but portable scripts
+.\"O \s-1POSIX\s0 allows this behavior as an extension, but portable scripts
 .\"O should avoid it.
 .\"O .
 \s-1GNU\s0
@@ -1535,7 +1518,7 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 は、正規表現に文法エラーがあると報告するかわりに、2 文字からなる文字列
 .B {1
 を検索するのです。
-この動作は、\s-1POSIX.2\s0 によって拡張として認められていますが、
+この動作は、\s-1POSIX\s0 によって拡張として認められていますが、
 移植を考慮したスクリプトでは使用しない方がよいでしょう。
 .
 .\"O .SH "ENVIRONMENT VARIABLES"
@@ -2086,13 +2069,13 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .B POSIXLY_CORRECT
 .\"O If set,
 .\"O .B grep
-.\"O behaves as \s-1POSIX.2\s0 requires; otherwise,
+.\"O behaves as \s-1POSIX\s0 requires; otherwise,
 .\"O .B grep
 .\"O behaves more like other \s-1GNU\s0 programs.
-.\"O \s-1POSIX.2\s0 requires that options that follow file names must be
+.\"O \s-1POSIX\s0 requires that options that follow file names must be
 .\"O treated as file names; by default, such options are permuted to the
 .\"O front of the operand list and are treated as options.
-.\"O Also, \s-1POSIX.2\s0 requires that unrecognized options be diagnosed as
+.\"O Also, \s-1POSIX\s0 requires that unrecognized options be diagnosed as
 .\"O \*(lqillegal\*(rq, but since they are not really against the law the default
 .\"O is to diagnose them as \*(lqinvalid\*(rq.
 .\"O .B POSIXLY_CORRECT
@@ -2100,16 +2083,16 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .\"O described below.
 これが設定されていると、
 .B grep
-は \s-1POSIX.2\s0 が要求するとおりの動作をします。
+は \s-1POSIX\s0 が要求するとおりの動作をします。
 設定されていない場合の動作は、ほかの \s-1GNU\s0 のプログラムに
 より近いものです。
-\s-1POSIX.2\s0 の規定では、ファイル名の後にオプションが現れた場合、
+\s-1POSIX\s0 の規定では、ファイル名の後にオプションが現れた場合、
 それをファイル名として扱わなければならないことになっています。
 これに対して、
 .B grep
 のデフォルトでは、そうしたオプションを引き数リストの前の方に移動して、
 オプションとして扱います。
-また、\s-1POSIX.2\s0 の規定では、理解できないオプションは
+また、\s-1POSIX\s0 の規定では、理解できないオプションは
 \*(lqillegal\*(rq (違法) と判断するようになっていますが、
 そうしたオプションも法律に違反しているわけではないので、
 .B grep
@@ -2206,7 +2189,7 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .
 .\"O .SH COPYRIGHT
 .SH "著作権"
-Copyright 1998-2000, 2002, 2005-2010 Free Software Foundation, Inc.
+Copyright 1998-2000, 2002, 2005-2014 Free Software Foundation, Inc.
 .PP
 This is free software;
 see the source for copying conditions.
@@ -2267,7 +2250,7 @@ not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SS "標準のマニュアルページ"
 awk(1), cmp(1), diff(1), find(1), gzip(1),
 perl(1), sed(1), sort(1), xargs(1), zgrep(1),
-mmap(2), read(2),
+read(2),
 pcre(3), pcresyntax(3), pcrepattern(3),
 terminfo(5),
 glob(7), regex(7).
@@ -2278,7 +2261,8 @@ grep(1p).
 .SS "\*(Txinfo 文書"
 .\"O The full documentation for
 .\"O .B grep
-.\"O is maintained as a \*(Txinfo manual.
+.\"O is maintained as a \*(Txinfo manual,
+.\"O which you can read at http://www.gnu.org/software/grep/manual/.
 .\"O If the
 .\"O .B info
 .\"O and
@@ -2290,7 +2274,8 @@ grep(1p).
 .\"O should give you access to the complete manual.
 .\"O .
 .B grep
-のための充実した文書が、\*(Txinfo マニュアルの形で保守されています。
+のための完全版の文書が、\*(Txinfo マニュアルの形で保守され、
+http://www.gnu.org/software/grep/manual/ で読めます。
 .B info
 と
 .B grep
@@ -2301,6 +2286,12 @@ grep(1p).
 とコマンドを打ち込むことで、完備したマニュアルが読めるはずです。
 .\"O .SH NOTES
 .SH "注記"
+.\"O This man page is maintained only fitfully;
+.\"O the full documentation is often more up-to-date.
+.\"O .PP
+このマニュアルは断続的にメンテナンスされるため、
+完全版の文書のほうが最新であることがよくあります。
+.PP
 \s-1GNU\s0's not Unix, but Unix is a beast;
 its plural form is Unixen.
 .SH "訳者謝辞"

@@ -1409,7 +1409,7 @@ C ロケールや \s-1ASCII\s0 文字集合のエンコーディングの場合�
 この機能は
 .BR grep
 の将来のリリースで削除されることになっており、
-使われると
+使用すると
 .B grep
 が警告を表示します。
 かわりにエイリアスやスクリプトを使ってください。
@@ -1952,7 +1952,7 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .\" コマンドで見えないようにしておきます。getopt(3) を参照してください)
 .
 .\"O .SH "EXIT STATUS"
-.SH "返り値"
+.SH "終了ステータス"
 .\"O Normally the exit status is 0 if a line is selected, 1 if no lines
 .\"O were selected, and 2 if an error occurred.  However, if the
 .\"O .B \-q
@@ -1963,13 +1963,13 @@ SGR パラメータの値は十進法の整数であり、セミコロンで結�
 .\"O is used and a line is selected, the exit status is 0 even if an error
 .\"O occurred.
 .\"O .
-通常では、指定した行が見つかったときの終了ステータスは 0 であり、
+通常では、選択される行が見つかったときの終了ステータスは 0 であり、
 見つからなかったときは 1 であり、エラーが起きた場合は 2 です。
 ただし、
 .B \-q ,
 .B \-\^\-quiet ,
 .B \-\^\-silent
-といったオプションが使われていて、指定した行が見つかったときは、
+といったオプションが使われていて、選択される行が見つかったときは、
 エラーが起きたときでも終了ステータスは 0 です。
 .
 .\"O .SH COPYRIGHT

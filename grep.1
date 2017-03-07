@@ -200,8 +200,8 @@ grep, egrep, fgrep \- パターンにマッチする行を表示する
 .\"O .RB ( \-\-regexp )
 .\"O option, search for all patterns given.
 このオプションを複数回使ったときや、
-.\"O .B \-e
-.\"O .RB ( \-\-regexp )
+.B \-e
+.RB ( \-\-regexp )
 オプションと組み合わせたときは、与えられたすべてのパターンを検索します。
 .\"O The empty file contains zero patterns, and therefore matches nothing.
 空のファイルはパターンを含まないので、何にもマッチしません。
@@ -872,8 +872,8 @@ grep
 各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
 ただし、シンボリックリンクはコマンドラインで指定されたときにのみたどります。
 .\"O Note that if no file operand is given, grep searches the working directory.
-対象ファイルが与えられなかった場合には
-grep は現在のディレクトリを探すことに注意してください
+検索対象のファイルが指定されなかった場合には
+grep は現在のディレクトリを探すことに注意してください。
 .\"O This is equivalent to the
 .\"O .B "\-d recurse"
 .\"O option.

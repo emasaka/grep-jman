@@ -885,7 +885,7 @@ Unix 形式のバイトオフセットを報告します。
 .B
 grep
 は各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
-コマンドラインの場合はシンボリックリンクを追跡します。
+ただし、シンボリックリンクはコマンドラインで指定されたときにのみたどります。
 これは
 .B \-r
 オプションと等価です。
@@ -963,10 +963,11 @@ grep
 .\"O .B "\-d recurse"
 .\"O option.
 各ディレクトリの下にあるすべてのファイルを再帰的に読み込みます。
-コマンドラインの場合はシンボリックリンクを追跡します。
+ただし、シンボリックリンクはコマンドラインで指定されたときにのみたどります。
 これは
 .B "\-d recurse"
 オプションと等価です。
+.TP
 .BR \-R ", " \-\^\-dereference\-recursive
 .\"O Read all files under each directory, recursively.
 .\"O Follow all symbolic links, unlike
@@ -1233,7 +1234,7 @@ pcresyntax(3) や pcrepattern(3) で詳細に解説されていますが、
 たとえば、
 .B [[:alnum:]]
 は
-現在のロケールの文字クラスで数字とアルファベットを意味します。
+現在のロケールの文字クラスで数字と文字を意味します。
 C ロケールや \s-1ASCII\s0 文字集合のエンコーディングの場合、
 これは
 .BR [0\-9A\-Za\-z]
@@ -2297,8 +2298,7 @@ its plural form is Unixen.
 .SH "訳者謝辞"
 この翻訳は、FreeBSD jpman Project <http://www.jp.freebsd.org/man-jp/>
 から Linux JM project に寄贈していただいたマニュアルを元にし、
-GNU grep-2.6.3 所収のマニュアルに合わせて、増補・改訂したものです。
-作業に当たっては、FreeBSD jpman Project の新しいマニュアルの翻訳も
-参考にしました。上記の文書を翻訳なさった方々にお礼を申し上げます。
+GNU grep の新しいマニュアルに合わせて、増補・改訂しています。
+この場を借りて、FreeBSD jpman Project の翻訳者の方々にお礼を申し上げます。
 .\" Work around problems with some troff -man implementations.
 .br

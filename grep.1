@@ -655,20 +655,20 @@ Unix 形式のバイトオフセットを報告します。
 .\"O assume that the file is of type
 .\"O .IR TYPE .
 ファイルのデータやメタデータが、
-ファイルの内容がバイナリデータであることを示す場合、
+ファイルにバイナリデータが含まれていることを示す場合に、
 ファイルのタイプを
 .IR TYPE
-であると仮定します。
+だと見なします。
 .\"O Non-text bytes indicate binary data; these are either output bytes that are
 .\"O improperly encoded for the current locale, or null input bytes when the
 .\"O .B \-z
 .\"O option is not given.
 .\"O .IP
-テキストではないバイトはバイナリデータであることを示します。
-これには、
-現在のロケールに対して不適切にエンコードされたバイトの場合や、
+テキストではないバイトが見つかれば、バイナリデータです。
+テキストではないバイトが、
+現在使用しているロケールに不適切にエンコードして出力されたバイトや、
 .B \-z
-オプションが与えられていないのに NULL 文字が入力された場合があります。
+オプションが指定されていないときの入力中のヌルバイトだということもあります。
 .IP
 .\"O By default,
 .\"O .I TYPE
@@ -688,7 +688,7 @@ Unix 形式のバイトオフセットを報告します。
 .B grep
 はファイルがバイナリだとわかると、
 その先の出力を抑制します。そのかわりにバイナリファイルにマッチしたという
-1 行のメッセージを表示するか、マッチする部分がない場合には何も表示しません。
+1 行のメッセージを表示します。マッチする部分がない場合には何も表示しません。
 .IP
 .\"O If
 .\"O .I TYPE
@@ -710,6 +710,7 @@ Unix 形式のバイトオフセットを報告します。
 これは
 .B \-I
 オプションと等価です。
+.IP
 .\"O If
 .\"O .I TYPE
 .\"O is
@@ -772,9 +773,11 @@ Unix 形式のバイトオフセットを報告します。
 .I type
 が
 .B binary
-の場合はパターンの直後に NULL 文字があると
-.B マッチする可能性がある
-のに対し、
+の場合は
+.B q$
+というパターンが
+.B q
+の直後に NULL 文字が続く箇所にマッチする可能性があるのに対し、
 .I type
 が
 .BR text
@@ -788,7 +791,6 @@ Unix 形式のバイトオフセットを報告します。
 .\"O (period) might not match a null byte.
 .\"O .IP
 逆に、
-when
 .I type
 が
 .B binary
@@ -803,7 +805,7 @@ when
 .\"O which can have nasty side effects if the output is a terminal and if the
 .\"O terminal driver interprets some of it as commands.
 .I 警告:
-.\"O .B \-a
+.B \-a
 オプションはバイナリのゴミを出力するかもしれません。
 出力先が端末であり、しかも
 端末ドライバがゴミの一部をコマンドだと解釈する場合には、
@@ -905,21 +907,25 @@ grep
 .\"O name, or any suffix starting after a
 .\"O .B /
 .\"O and before a +non-\fB/\fP.
-コマンドラインのファイルのうち、
-名前の接尾辞がパターン
+コマンドラインで指定されているファイルについては、
+その名前の尾部が、
+ワイルドカードによるマッチングでパターン
 .IR GLOB
-にワイルドカードでマッチするものをスキップします
-名前の接尾辞とは、名前全体か、
+にマッチするファイルをスキップします。
+ここで言う「名前の尾部」とは、
+ファイル名の全体か、
 .B /
-の後で \fB/\fP 以外が続く接尾辞です。
+の直後に始まり
+.B /
+以外の文字で終るファイル名の最後の部分のことです。
 .\"O When searching recursively, skip any subfile whose base name matches
 .\"O .IR GLOB ;
 .\"O the base name is the part after the last
 .\"O .BR / .
-ディレクトリを再帰的に検索するときは、
+また、ディレクトリを再帰検索しているときに出会うファイルについては、
 ベースネームが
 .IR GLOB
-にマッチするすべてのファイルをスキップします。
+にマッチするファイルをスキップします。
 ベースネームとは最後の
 .BR /
 より後の部分です。
@@ -955,17 +961,17 @@ grep
 .\"O Skip any command-line directory with a name suffix that matches the
 .\"O pattern
 .\"O .IR GLOB .
-コマンドラインのディレクトリのうち、
-名前の接尾辞がパターン
+コマンドラインで指定されているディレクトリのうち、
+名前の尾部がパターン
 .IR GLOB
-にワイルドカードでマッチするものをスキップします
+にマッチするディレクトリをスキップします。
 .\"O When searching recursively, skip any subdirectory
 .\"O whose base name matches
 .\"O .IR GLOB .
-ディレクトリを再帰的に検索するときは、
-名前が
+また、ディレクトリを再帰検索しているときに出会うサブディレクトリについては、
+ベースネームが
 .IR GLOB
-にマッチするすべてのディレクトリをスキップします。
+にマッチするサブディレクトリをスキップします。
 .\"O Ignore any redundant trailing slashes in
 .\"O .IR GLOB .
 .IR GLOB
@@ -1071,6 +1077,7 @@ CR 文字を取り除きます。
 .\"O Treat input and output data as sequences of lines, each terminated by
 .\"O a zero byte (the ASCII NUL character) instead of a newline.
 入力と出力のデータを、
+改行のかわりに、
 値が 0 のバイト (ASCII NULL 文字) で区切られた一連の行として扱います。
 .\"O Like the
 .\"O .B \-Z
